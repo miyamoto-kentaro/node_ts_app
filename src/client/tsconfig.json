@@ -6,7 +6,7 @@
     "baseUrl": ".",
     "paths": {},
     "moduleResolution": "node",
-    "strict": true
+    "strict": false
   },
   "include": [
     "**/*.ts"

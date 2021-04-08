@@ -1,20 +1,38 @@
 <!DOCTYPE html>
 <html>
 
-<head>
+  <head>
 
-    <title>TypeScript Socket.IO Course</title>
+    <title>Join_Room</title>
+    <!-- css -->
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
 
-</head>
+  </head>
 
-<body>
-
+  <body>
+    <!-- frontend framework js -->
     <script src="jquery/jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <div class="container">
+      <form class="row g-3">
+        <div class="col-auto">
+          <label for="inputRoomName" class="visually-hidden">Room Name</label>
+          <input type="text" class="form-control" id="roomname" placeholder="roomname">
+        </div>
+        <div class="col-auto">
+          <button type="button" class="btn btn-primary mb-3" onclick="client.joinRoom()">join this room</button>
+        </div>
+      </form>
+      <div class="alert alert-primary" id="memberlist" role="alert">
+        ----- your room member -----
+      </div>
+    </div>
+
+    <!-- socket js -->
     <script src="socket.io/socket.io.js"></script>
     <script src="client.js"></script>
 
-</body>
+  </body>
 
 </html>
