@@ -6,6 +6,45 @@
     <title>Join_Room</title>
     <!-- css -->
     <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <style>
+      .home_input {
+        position: absolute;
+        /* width: 600px;
+        height: 300px; */
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 20px;
+      }
+
+      .dice_btn {
+        position: absolute;
+        right: 20%;
+      }
+
+      #navbar_rooms {
+        border-radius: 0px 20px 4px 20px;
+      }
+
+      .gamePanel {
+        position: relative;
+        border: solid 1px gray;
+        height: 500px;
+        border-radius: 0px 20px 4px 20px;
+        box-shadow: 15px 10px #dddddd;
+      }
+
+      #homePanel {
+        display: block;
+        background: linear-gradient(180deg, rgba(195, 112, 34, 0.164) 0%, rgba(156, 200, 105, 0.495) 100%);
+      }
+
+      #roomPanel {
+        display: none;
+        background: linear-gradient(56deg, rgba(225, 238, 255, 0.492) 0%, rgba(122, 67, 250, 0.495) 100%);
+      }
+
+    </style>
 
   </head>
 
@@ -14,24 +53,82 @@
     <script src="jquery/jquery.min.js"></script>
     <script src="bootstrap/js/bootstrap.bundle.min.js"></script>
 
-    <div class="container">
-      <!-- room in -->
-      <form class="row g-3">
-        <div class="col-auto">
-          <label for="inputRoomName" class="visually-hidden">Room Name</label>
-          <input type="text" class="form-control" id="roomname" placeholder="roomname">
+    <!-- navigation bar -->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">TRPG ツール</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+          aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Link</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+            </li>
+          </ul>
+          <form class="d-flex">
+            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success" type="submit">Search</button>
+          </form>
         </div>
-        <div class="col-auto">
-          <button type="button" class="btn btn-primary mb-3" onclick="client.joinRoom()">join this room</button>
-        </div>
-      </form>
-      <div class="alert alert-primary" id="menber_list_elem" role="alert">
-        ----- your room member -----
       </div>
-      <button type="button" class="btn btn-primary" id="dice" onclick="client.diceRool()">
-        ROOL <span class="badge bg-secondary" id="d100">d100</span>
-        <span class="visually-hidden" id="result">00</span>
-      </button>
+    </nav>
+
+    <!-- main contant -->
+    <div class="container" style="margin-top:30px">
+      <div class="row">
+        <div class="col-sm-11">
+
+          <div class="gamePanel" id="homePanel">
+            <h1 class="h3 mb-3 font-weight-normal text-center" style="margin: 30px;">TRPG ダイスロール</h1>
+            <form class="form-signin home_input">
+              <div class="row" style="margin:30px">
+                <div class="form-label-group col">
+                  <input type="text" id="join_user_name" class="form-control" placeholder="ユーザー名" required autofocus>
+                </div>
+                <div class="form-label-group col">
+                  <input type="text" id="join_room_name" class="form-control" placeholder="参加する部屋" required>
+                </div>
+                <button type="button" class="btn btn-primary col" onclick="client.joinRoom()">参加</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Panels -->
+          <div class="gamePanel" id="roomPanel">
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark mb-4" id="navbar_rooms">
+              <div class="container-fluid">
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                  <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                    <li class="nav-item">
+                      <a class="nav-link active navbar-brand" aria-current="page" href="#"
+                        onclick="client.leaveRoom()">ルームから抜ける</a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </nav>
+            <h1 class="h3 mb-3 font-weight-normal text-center" style="margin: 30px;">ルーム</h1>
+            <!-- room in -->
+            <div class="alert alert-primary" id="menber_list_elem" role="alert" style="margin: 30px;">
+              ----- your room member -----
+            </div>
+
+            <button type="button" class="btn btn-primary dice_btn" id="dice" onclick="client.diceRool()">
+              ロール <span class="badge bg-secondary" id="d100">d100</span>
+              <span class="visually-hidden" id="result">00</span>
+            </button>
+
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- socket js -->

@@ -5,12 +5,12 @@ import socketIO from "socket.io"
 
 const port: number = 3000
 
-// interface User {
-//     name: string
-//     id: string
-//     room: string
-//     dice: number
-// }
+interface User {
+    name: string
+    id: string
+    room: string
+    dice: Array<number>
+}
 
 class App {
     private server: http.Server
@@ -18,7 +18,7 @@ class App {
 
     private io: socketIO.Server
 
-    // private players: { [id: string]: User } = {}
+    private players: { [id: string]: User } = {}
 
     constructor(port: number) {
         this.port = port
@@ -33,10 +33,11 @@ class App {
         
 
         this.io.on('connection', (socket: socketIO.Socket) => {
-            console.log('a user connected : ' + socket.id)
-            // this.players[socket.id] = {name:'non-player', id:socket.id, room:'non', dice: 0 }
+            // console.log('a user connected : ' + socket.id)
+            this.players[socket.id] = {name:'non-player', id:socket.id, room:'', dice: [0] }
+            // console.log(this.players[socket.id])
 
-            socket.on('joinroom',  (join_room_name) => {
+            socket.on('joinroom',  (join_room_name,join_user_name) => {
                 console.log(Array.from(socket.rooms))
                 if(Array.from(socket.rooms)[1] != join_room_name){
                     // leave room porcessing
@@ -48,34 +49,50 @@ class App {
 
                     // join room porcessing
                     socket.join(join_room_name)
+                    this.players[socket.id].room = join_room_name
+                    if(join_user_name)this.players[socket.id].name = join_user_name
+                    // console.log(this.players[socket.id])
                     // console.log(socket.rooms.values())
 
                     // get room menber list
                     var room_map = this.io.sockets.adapter.rooms
-                    console.log('room_map:',room_map)
-                    console.log(Array.from(socket.rooms)[1])
+                    // console.log('room_map:',room_map)
+                    // console.log(Array.from(socket.rooms)[1])
 
-                    var menber_list = Array.from(room_map.get(join_room_name))
-                    var join_user = socket.id
+                    var menber_id_list = Array.from(room_map.get(join_room_name))
+                    var menber_name_list:Array<User> = []
+                    for(let id of menber_id_list){
+                        menber_name_list.push(this.players[id])
+                    }
+                    var join_user = this.players[socket.id]
                     // emit join!!!
-                    socket.in(join_room_name).emit('joinroom',menber_list,join_user)
-                    socket.emit('joinroom',menber_list)
+                    socket.in(join_room_name).emit('joinroom',menber_name_list,join_user)
+                    socket.emit('joinroom',menber_name_list)
                 }   
+            })
+
+            socket.on('leaved_room', ()=>{
+                console.log('leave:',this.players[socket.id])
+                socket.in(this.players[socket.id].room).emit('leaved_room', this.players[socket.id])
+                socket.emit('leave_room')
+                socket.leave(this.players[socket.id].room)
+                this.players[socket.id].room = ''
+                // console.log(this.players)
             })
             
             socket.on('dicerool', (maxNum)=>{
                 let dicerool:number = this.getRandomInt(maxNum)
+                this.players[socket.id].dice.unshift(dicerool)
+                
                 console.log('yes')
-                socket.in(Array.from(socket.rooms)[1]).emit('dicerool',dicerool,socket.id)
-                socket.emit('dicerool',dicerool)
+                socket.in(Array.from(socket.rooms)[1]).emit('dicerool', this.players[socket.id])
+                socket.emit('dicerool', this.players[socket.id])
             })
 
-            socket.on('disconnect', (room) => {
-                var disconnect_user:string = socket.id
-                socket.in(room).emit('leaved_room', disconnect_user)
-                console.log('room:',socket.rooms)
-                console.log('socket disconnected : ' + socket.id)
-
+            socket.on('disconnect', () => {
+                socket.in(this.players[socket.id].room).emit('leaved_room', this.players[socket.id])
+                delete this.players[socket.id]
+                console.log(this.players)
             });
 
         })
