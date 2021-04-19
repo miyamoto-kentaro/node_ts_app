@@ -13,7 +13,7 @@ class Client {
 
         this.socket.on('joinroom', (menber_list:Array<User>,join_user:User)=>{
             // console.log(menber_list)
-            var menber_list_elem = document.getElementById('menber_list_elem');
+            var menber_list_elem = document.getElementById('menber_list_elem')
             // menber_list_elem.innerHTML = ''
             if (join_user){
                 // another add join_user process
@@ -71,6 +71,8 @@ class Client {
         if (roomName.toString().length > 0) {
 
             this.socket.emit("joinroom",roomName,userName)
+            document.getElementById('room_name').innerHTML = 'ルームID： ' + roomName 
+
             // alert('join')
 
             // let room_name:any = $("#room").val()
@@ -83,10 +85,17 @@ class Client {
         this.socket.emit('leaved_room')
     }
 
-    public diceRool() {
-        let maxNum:number = 100
-        if (maxNum.toString().length >0) {
-            this.socket.emit('dicerool',maxNum)
+    public diceRool(numDice:number,maxRool:number) {
+        if (numDice && maxRool) {
+            this.socket.emit('dicerool',numDice,maxRool)
+        }
+    }
+    public diceRoolSelf(){
+        var numDice:number = Number((<HTMLInputElement>document.getElementById('numDice')).value)
+        var maxRool:number = Number((<HTMLInputElement>document.getElementById('maxRool')).value)
+        // console.log(numDice,maxRool)
+        if (numDice && maxRool) {
+            this.socket.emit('dicerool',numDice,maxRool)
         }
     }
 

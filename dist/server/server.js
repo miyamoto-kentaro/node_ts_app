@@ -62,17 +62,20 @@ class App {
                 this.players[socket.id].room = '';
                 // console.log(this.players)
             });
-            socket.on('dicerool', (maxNum) => {
-                let dicerool = this.getRandomInt(maxNum);
+            socket.on('dicerool', (numDice, maxRool) => {
+                var dicerool = 0;
+                for (let count = 0; count < numDice; count++) {
+                    dicerool += this.getRandomInt(maxRool);
+                }
+                // console.log(dicerool)
                 this.players[socket.id].dice.unshift(dicerool);
-                console.log('yes');
-                socket.in(Array.from(socket.rooms)[1]).emit('dicerool', this.players[socket.id]);
+                socket.in(this.players[socket.id].room).emit('dicerool', this.players[socket.id]);
                 socket.emit('dicerool', this.players[socket.id]);
             });
             socket.on('disconnect', () => {
                 socket.in(this.players[socket.id].room).emit('leaved_room', this.players[socket.id]);
                 delete this.players[socket.id];
-                console.log(this.players);
+                console.log('leave:', this.players);
             });
         });
     }

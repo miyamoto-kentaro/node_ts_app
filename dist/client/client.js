@@ -58,6 +58,7 @@ class Client {
         var userName = $("#join_user_name").val();
         if (roomName.toString().length > 0) {
             this.socket.emit("joinroom", roomName, userName);
+            document.getElementById('room_name').innerHTML = 'ルームID： ' + roomName;
             // alert('join')
             // let room_name:any = $("#room").val()
             // console.log(room_name)
@@ -67,10 +68,17 @@ class Client {
     leaveRoom() {
         this.socket.emit('leaved_room');
     }
-    diceRool() {
-        let maxNum = 100;
-        if (maxNum.toString().length > 0) {
-            this.socket.emit('dicerool', maxNum);
+    diceRool(numDice, maxRool) {
+        if (numDice && maxRool) {
+            this.socket.emit('dicerool', numDice, maxRool);
+        }
+    }
+    diceRoolSelf() {
+        var numDice = Number(document.getElementById('numDice').value);
+        var maxRool = Number(document.getElementById('maxRool').value);
+        // console.log(numDice,maxRool)
+        if (numDice && maxRool) {
+            this.socket.emit('dicerool', numDice, maxRool);
         }
     }
     showPanel(id) {
